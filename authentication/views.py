@@ -9,7 +9,7 @@ import bcrypt
 
 
 class UserList(APIView):
-    permission_classes = (permissions.AllowAny,) # can acces not authentication
+    # permission_classes = (permissions.AllowAny,) # can acces not authentication
 
     def get(self, request, format=None):
         """
