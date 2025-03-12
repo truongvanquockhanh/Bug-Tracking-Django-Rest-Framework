@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from authentication.models import AuthUser
+from users.models import User
 
 
-class AuthSerializer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AuthUser
+        model = User
         fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'date_join']
 
 class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AuthUser
+        model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_join']

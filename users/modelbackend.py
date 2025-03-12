@@ -1,7 +1,7 @@
 from django.contrib.auth.backends import BaseBackend, ModelBackend
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-from authentication.serializers import AuthSerializer
+from users.serializers import PostSerializer
 from django.http import Http404
 import bcrypt
 
@@ -17,7 +17,7 @@ class SettingsBackend(ModelBackend):
         except :
             raise Http404("user don't exist")
         user = UserModel.objects.get(username = username)
-        pw = AuthSerializer(user).data['password']
+        pw = PostSerializer(user).data['password']
         print("filter name: ", user, pw)
         pwd_valid = bcrypt.checkpw(password.encode(), pw.encode())
         

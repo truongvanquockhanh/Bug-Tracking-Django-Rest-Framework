@@ -1,7 +1,7 @@
 from django import forms
-from models import AuthUser
+from models import User
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     class Meta:
-        model = AuthUser
+        model = User
         fields = ('username', 'password')

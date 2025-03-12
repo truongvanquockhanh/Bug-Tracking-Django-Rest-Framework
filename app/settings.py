@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular_sidecar',
     'drf_spectacular',
-    'authentication',
+    'users',
+    'authen',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
 ]
@@ -202,6 +203,6 @@ PASSWORD_HASHERS = [
 ]
 
 
-AUTH_USER_MODEL = 'authentication.AuthUser'
+AUTH_USER_MODEL = 'users.User'
 
-AUTHENTICATION_BACKENDS  = ('authentication.modelbackend.SettingsBackend',)
+AUTHENTICATION_BACKENDS  = ('users.modelbackend.SettingsBackend',)
