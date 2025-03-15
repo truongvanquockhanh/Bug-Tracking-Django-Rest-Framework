@@ -4,6 +4,8 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import  Http404
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 import bcrypt
 
 
@@ -31,7 +33,7 @@ class UserList(APIView):
         """
          List all snippets, or create a new snippet.`
         """
-        user = User.objects.all()
+        user = User.objects.all().order_by('id')
         serializer = GetUserSerializer(user, many=True)
         return Response(serializer.data)
 
@@ -72,4 +74,14 @@ class UserDetail(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class FilterUser(APIView):
+     serializer_class = GetUserSerializer
+
+     def get(self, request, *args, **kwargs):
+         username = request.query_params.get('username')
+         email = request.query_params.get('email')
+         user = User.objects.filter(Q(username=username) | Q(email=email))
+         serializer = GetUserSerializer(user, many=True)
+         return Response(serializer.data)
 

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
 
 
 class User(AbstractBaseUser):
@@ -17,7 +16,8 @@ class User(AbstractBaseUser):
     PASSWORD_FIELD = "password"
 
 
-    # objects = CustomUserManager()
-
     def __str__(self):
         return self.username
+
+    class Meta:
+      db_table = 'member'
