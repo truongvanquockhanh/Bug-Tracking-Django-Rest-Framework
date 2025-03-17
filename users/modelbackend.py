@@ -18,7 +18,6 @@ class SettingsBackend(ModelBackend):
             raise Http404("user don't exist")
         user = UserModel.objects.get(username = username)
         pw = PostSerializer(user).data['password']
-        print("filter name: ", user, pw)
         pwd_valid = bcrypt.checkpw(password.encode(), pw.encode())
         
         if pwd_valid and user:

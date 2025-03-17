@@ -24,6 +24,9 @@ class Project(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     members = models.ManyToManyField(User, related_name="member_of_project", blank= True)
+    owner_by = models.ForeignKey (
+       User, on_delete=models.CASCADE, blank= True
+    )
 
     class Meta:
       db_table = 'project'

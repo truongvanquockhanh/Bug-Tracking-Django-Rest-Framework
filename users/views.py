@@ -29,20 +29,26 @@ class CreaterUser(APIView):
 class UserList(APIView):
 
     serializer_class = GetUserSerializer
+
     def get(self, request, format=None):
-        """
-         List all snippets, or create a new snippet.`
-        """
-        user = User.objects.all().order_by('id')
+
+        user = User.objects.all()
         serializer = GetUserSerializer(user, many=True)
         return Response(serializer.data)
 
-    
+class SortUser(APIView):
+
+    serializer_class = GetUserSerializer
+
+    def get(self, request, format=None):
+
+        sort = request.query_params.get('sort_by')
+        user = User.objects.all().order_by(sort)
+        serializer = GetUserSerializer(user, many=True)
+        return Response(serializer.data)
+
 
 class UserDetail(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
 
     serializer_class = GetUserSerializer
 
