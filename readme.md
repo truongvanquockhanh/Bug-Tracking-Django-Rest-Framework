@@ -31,6 +31,7 @@ pip install requirements.txt
 ## Run app
 
 ```sh
+python manage.py makemigrations
 python manage.py migrate
 python manage.py runserver
 ```
