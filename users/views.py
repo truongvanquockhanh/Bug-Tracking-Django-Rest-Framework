@@ -31,21 +31,18 @@ class UserList(APIView):
     serializer_class = GetUserSerializer
 
     def get(self, request, format=None):
-
-        user = User.objects.all()
+        order = request.query_params.get('order_by', 'id')
+        username = request.query_params.get('username', False)
+        email = request.query_params.get('email', False)
+        if username and email:
+            query = Q(username=username) & Q(email=email)
+        elif email or username:
+            query = Q(username=username) | Q(email=email)
+        else:
+            query = Q()
+        user = User.objects.filter(query).order_by(order)
         serializer = GetUserSerializer(user, many=True)
-        return Response(serializer.data)
-
-class SortUser(APIView):
-
-    serializer_class = GetUserSerializer
-
-    def get(self, request, format=None):
-
-        sort = request.query_params.get('sort_by')
-        user = User.objects.all().order_by(sort)
-        serializer = GetUserSerializer(user, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data) 
 
 
 class UserDetail(APIView):

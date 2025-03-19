@@ -1,6 +1,8 @@
 from project.models import Project
 from users.serializers import GetUserSerializer
 from users.models import User
+from bugs.serializers import BugsSerializer
+from bugs.models import Bugs
 from project.serializers import ProjectSerializer, PostProjectSerializer
 from rest_framework.response import Response
 from rest_framework import generics, status
@@ -20,16 +22,25 @@ class ProjectList(APIView):
     
     def get(self, request, format=None):
 
-        project = Project.objects.all().order_by()
+        order = request.query_params.get('order_by', 'id')
+        name = request.query_params.get('name', False)
+        status = request.query_params.get('status', False)
+        priority = request.query_params.get('priority', False)
+        owner_by = request.query_params.get('owner_by', False)
+        members = request.query_params.get('members', False)
+        list_filter = {'name': name, 'status': status, 'priority': priority, 'owner_by': owner_by, 'members': members}
+        list_filter = {k: v for k, v in list_filter.items() if v}
+        print(list_filter)
+        query = Q()
+        for key, value in list_filter.items():
+            query = query & Q(**{key: value})
+        project = Project.objects.filter(query).order_by(order)
         serializer = ProjectSerializer(project, many=True)
         return Response(serializer.data)
   
     def post(self, request, format = None):
        
-        token = request.auth.token
-        key = settings.SECRET_KEY
-        payload = jwt.decode(token, key, algorithms='HS256')
-        get_user = User.objects.get(id=payload['user_id'])
+        get_user = request.user
        
         serializer = PostProjectSerializer(data=request.data)
         if serializer.is_valid():
@@ -38,7 +49,15 @@ class ProjectList(APIView):
             return Response("Created new project", status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
        
+class BugsOfProject(APIView):
 
+    serializer_class = BugsSerializer
+
+    def get(self, request, pk, format=None):
+        project = Project.objects.get(pk = pk)
+        bugs = Bugs.objects.filter(project=project)
+        serializer = BugsSerializer(bugs, many=True)
+        return Response(serializer.data)
     
 
 
@@ -64,14 +83,14 @@ class ProjectDetail(APIView):
 
     def get(self, request, pk, format=None):
         if not self.isMember(request, pk):
-            return Response("You aren't member in this project", status=status.HTTP_302_FOUND)
+            return Response("You aren't member in this project", status=status.HTTP_401_UNAUTHORIZED)
         project = self.get_object(pk)
-        serializer = ProjectSerializer(project)
+        serializer = BugsSerializer(project, many=True)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         if not self.isMember(request, pk):
-            return Response("You aren't member in this project", status=status.HTTP_302_FOUND)
+            return Response("You aren't member in this project", status=status.HTTP_401_UNAUTHORIZED)
         project = self.get_object(pk)
         serializer = ProjectSerializer(project, data=request.data)
         if serializer.is_valid():
@@ -81,7 +100,7 @@ class ProjectDetail(APIView):
 
     def delete(self, request, pk, format=None):
         if not self.isMember(request, pk):
-            return Response("You aren't member in this project", status=status.HTTP_302_FOUND)
+            return Response("You aren't member in this project", status=status.HTTP_401_UNAUTHORIZED)
         project = self.get_object(pk)
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

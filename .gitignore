@@ -1,3 +1,5 @@
+.env
+
 db.sqbpro
 db.sqlite3
 app/__pycache__/
