@@ -12,7 +12,7 @@ from note.models import Note
 class BugsList(APIView):
 
     serializer_class = BugsSerializer
-    
+
     def get(self, request, format=None):
 
         order = request.query_params.get('order_by', 'id')
@@ -28,9 +28,9 @@ class BugsList(APIView):
         bugs = Bugs.objects.filter(query).order_by(order)
         serializer = BugsSerializer(bugs, many=True)
         return Response(serializer.data)
-  
-    def post(self, request, format = None):
-              
+
+    def post(self, request, format=None):
+
         serializer = BugsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -42,7 +42,7 @@ class BugsDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Bugs.objects.all()
     serializer_class = BugsSerializer
 
-     
+
 class SortBugs(APIView):
 
     serializer_class = BugsSerializer
@@ -54,12 +54,13 @@ class SortBugs(APIView):
         serializer = BugsSerializer(bugs, many=True)
         return Response(serializer.data)
 
+
 class NoteOfBugs(APIView):
 
     serializer_class = NoteSerializer
 
     def get(self, request, pk, format=None):
-        bugs = Bugs.objects.get(pk = pk)
+        bugs = Bugs.objects.get(pk=pk)
         note = Note.objects.filter(bugs=bugs)
         serializer = NoteSerializer(note, many=True)
         return Response(serializer.data)

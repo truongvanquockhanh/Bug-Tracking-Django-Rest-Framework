@@ -1,4 +1,4 @@
-from django.contrib.auth.backends import BaseBackend, ModelBackend
+from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from users.serializers import PostSerializer
@@ -11,15 +11,15 @@ UserModel = get_user_model()
 class SettingsBackend(ModelBackend):
 
     def authenticate(self, request, username=None, password=None):
+
         user = UserModel.objects
         try:
-            user = UserModel.objects.get(username = username)
-        except :
+            user = UserModel.objects.get(username=username)
+        except:
             raise Http404("user don't exist")
-        user = UserModel.objects.get(username = username)
+        user = UserModel.objects.get(username=username)
         pw = PostSerializer(user).data['password']
         pwd_valid = bcrypt.checkpw(password.encode(), pw.encode())
-        
         if pwd_valid and user:
             return user
 
