@@ -1,10 +1,11 @@
 from users.serializers import PostSerializer
 from authen.serializers import LogOutSerialize
+from users.models import User
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import bcrypt
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 class SignUp(APIView):
 
@@ -32,3 +33,21 @@ class LogOut(APIView):
         serialize.is_valid(raise_exception=True)
         serialize.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+        
+        user = User.objects.get(username=request.data['username'])
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data['access']
+        return Response({
+            'token': token,
+            'username': user.username,
+            'id': user.id,
+            'refresh': serializer.validated_data['refresh']
+        })

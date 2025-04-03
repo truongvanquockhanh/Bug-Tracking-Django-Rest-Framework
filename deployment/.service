@@ -1,0 +1,11 @@
+[Service]
+User=khanh
+Group=www-data
+WorkingDirectory=/home/khanh/Bug-Tracking-Django-Rest-Framework ## path to your project
+ExecStart=/home/khanh/.pyenv/versions/bugtrackerenv/bin/gunicorn \ ## path to gunicorn
+          --bind 0.0.0.0:8000 \
+          --workers 3 \
+          app.wsgi:application
+Environment="PATH=/home/khanh/.pyenv/versions/bugtrackerenv/bin"
+Environment="VIRTUAL_ENV=/home/khanh/.pyenv/versions/bugtrackerenv"
+Restart=always

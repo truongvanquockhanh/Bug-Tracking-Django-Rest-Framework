@@ -4,7 +4,8 @@ djangorestframework==3.15.2
 drf-spectacular==0.28.0
 djangorestframework-simplejwt==5.5.0
 bcrypt==4.3.0
-psycopg2==2.9.10
+psycopg2
 python-dotenv
 django-filter
 psycopg2-binary
+django-cors-headers

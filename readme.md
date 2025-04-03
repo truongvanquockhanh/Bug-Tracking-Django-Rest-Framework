@@ -57,3 +57,53 @@ To use a different settings module, modify the DJANGO_SETTINGS_MODULE environmen
 To run the app on a different port, use the following command: python manage.py runserver 8080
 I hope this helps! Let me know if you have any questions or need further clarification.
 ```
+
+## Deployment with gunicorn and ngix
+
+1. Install gunicorn, test gunicorn run app:
+
+```sh
+gunicorn --bind 0.0.0.0:8000 app.wsgi
+```
+
+2. Creating systemd Service Files for Gunicorn (in forder deployment)
+
+- After that run gunicorn:
+
+```sh
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn
+sudo systemctl status gunicorn
+```
+
+If status is active, gunicorn had run in port 8000, if have any err search run gunicorn with services
+
+3. Install nginx, and creater file .nginx
+
+- Start by creating and opening a new server block in Nginx’s sites-available directory:
+
+```sh
+sudo vi /etc/nginx/sites-available/nginx
+```
+
+file nginx example in forder deployment
+
+- Enable the file by linking it to the sites-enabled directory:
+
+```sh
+sudo ln -s /etc/nginx/sites-available/myproject /etc/nginx/sites-enabled
+```
+
+- Test your Nginx configuration for syntax errors by typing:
+
+```sh
+sudo nginx -t
+```
+
+- Start nginx:
+
+```sh
+sudo systemctl restart nginx
+```
+
+Done!
