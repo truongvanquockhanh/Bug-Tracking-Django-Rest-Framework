@@ -107,3 +107,78 @@ sudo systemctl restart nginx
 ```
 
 Done!
+
+# Deployment ( gubicorn and nginx )
+
+```sh
+pip install gunicorn
+```
+
+Create a systemd service file /etc/systemd/system/gunicorn.service:
+
+```sh
+[Unit]
+Description=FastAPI app with Gunicorn
+After=network.target
+
+[Service]
+User=yourusername
+Group=yourusername
+WorkingDirectory=/path/to/your/project
+ExecStart=/path/to/venv/bin/gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+then:
+
+```sh
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable fastapi
+sudo systemctl start fastapi
+```
+
+- Now, you app are running at post: 8000
+- After that, u need config nginx to connect to app at port: 8000
+
+# Nginx
+
+- Install nginx:
+
+```sh
+sudo apt update
+sudo apt install nginx
+```
+
+- Then create two Nginx config files:
+- 📁 /etc/nginx/sites-available/your_file.space:
+
+```file
+server {
+    listen 80;
+    server_name your_domain;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+Enable the sites:
+
+```sh
+
+sudo ln -s /etc/nginx/sites-available/your_file.space /etc/nginx/sites-enabled/
+```
+
+Check Nginx and restart:
+
+```sh
+sudo nginx -t
+sudo systemctl restart nginx
+```
