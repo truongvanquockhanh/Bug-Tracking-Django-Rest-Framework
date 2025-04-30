@@ -7,6 +7,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'date_join']
 
+
 class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
